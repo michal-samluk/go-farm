@@ -5,35 +5,47 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 )
 
+type Species int
+
+const (
+	Cattle Species = iota
+	DomesticPig
+	WildHorse
+)
+
+var speciesNames = []string{
+	Cattle:      "Cattle",
+	DomesticPig: "Domestic pig",
+	WildHorse:   "Wild horse",
+}
+
 type Animal struct {
-	Species []string
+	Species Species
 	Name    string
 	Age     int
 }
 
-func (a *Animal) SetSpecies(species string) {
-	speciesArr := strings.Split(species, ",")
-	a.Species = speciesArr
-}
-
-func (a *Animal) SetAge(age string) {
-	var err error
-	if a.Age, err = strconv.Atoi(age); err != nil {
-		panic(err)
-	}
-}
-
-func (a *Animal) SetName(name string) {
-	a.Name = name
-}
-
 func requestAnimal() (animal Animal) {
-	animal.SetSpecies(getInput("Species (seperated with comma): "))
-	animal.SetName(getInput("Name: "))
-	animal.SetAge(getInput("Age: "))
+	fmt.Println("Select species:")
+	for index, name := range speciesNames {
+		fmt.Println(strconv.Itoa(index) + ": " + name)
+	}
+
+	var species Species
+	fmt.Scanln(&species)
+	animal.Species = species
+
+	var name string
+	fmt.Print("Name: ")
+	fmt.Scanln(&name)
+	animal.Name = name
+
+	var age int
+	fmt.Print("Age: ")
+	fmt.Scanln(&age)
+	animal.Age = age
 	return
 }
 
@@ -42,21 +54,18 @@ func requestAnimals() (animals []Animal) {
 		animal := requestAnimal()
 		animals = append(animals, animal)
 
-		if getInput("Type 'Yes' if you want to continue: ") != "Yes" {
+		var answer string
+		fmt.Print("Type 'Yes' if you want to continue: ")
+		if fmt.Scanln(&answer); answer != "Yes" {
 			break
 		}
 	}
 	return
 }
 
-func getInput(message string) (input string) {
-	fmt.Print(message)
-	fmt.Scanln(&input)
-	return
-}
-
 func dumpAnimals(animals []Animal) {
 	file, err := os.Create("farm.json")
+	defer file.Close()
 
 	if err != nil {
 		panic(err)
@@ -67,6 +76,5 @@ func dumpAnimals(animals []Animal) {
 }
 
 func main() {
-	animals := requestAnimals()
-	dumpAnimals(animals)
+	dumpAnimals(requestAnimals())
 }
