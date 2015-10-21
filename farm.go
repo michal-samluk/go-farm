@@ -51,8 +51,7 @@ func requestAnimal() (animal Animal) {
 
 func requestAnimals() (animals []Animal) {
 	for {
-		animal := requestAnimal()
-		animals = append(animals, animal)
+		animals = append(animals, requestAnimal())
 
 		var answer string
 		fmt.Print("Type 'Yes' if you want to continue: ")
