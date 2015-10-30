@@ -26,7 +26,7 @@ type Animal struct {
 	Age     int
 }
 
-func requestAnimal() (*Animal) {
+func requestAnimal() *Animal {
 	animal := new(Animal)
 	for index, name := range speciesNames {
 		fmt.Printf("%d:%s\n", index, name)
@@ -43,7 +43,7 @@ func requestAnimal() (*Animal) {
 }
 
 func requestAnimals() (animals []*Animal) {
-	for answer := "Yes";answer=="Yes"; {
+	for answer := "Yes"; answer == "Yes"; {
 		animals = append(animals, requestAnimal())
 
 		fmt.Print("Type 'Yes' if you want to continue: ")
