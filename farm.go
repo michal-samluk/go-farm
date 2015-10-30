@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strconv"
 )
 
 type Species int
@@ -15,7 +14,7 @@ const (
 	WildHorse
 )
 
-var speciesNames = []string{
+var speciesNames = [3]string{
 	Cattle:      "Cattle",
 	DomesticPig: "Domestic pig",
 	WildHorse:   "Wild horse",
@@ -27,42 +26,33 @@ type Animal struct {
 	Age     int
 }
 
-func requestAnimal() (animal Animal) {
-	fmt.Println("Select species:")
+func requestAnimal() (*Animal) {
+	animal := new(Animal)
 	for index, name := range speciesNames {
-		fmt.Println(strconv.Itoa(index) + ": " + name)
+		fmt.Printf("%d:%s\n", index, name)
 	}
+	fmt.Print("Select species: ")
+	fmt.Scanf("%d", &animal.Species)
 
-	var species Species
-	fmt.Scanln(&species)
-	animal.Species = species
-
-	var name string
 	fmt.Print("Name: ")
-	fmt.Scanln(&name)
-	animal.Name = name
+	fmt.Scanf("%s", &animal.Name)
 
-	var age int
 	fmt.Print("Age: ")
-	fmt.Scanln(&age)
-	animal.Age = age
-	return
+	fmt.Scanf("%d", &animal.Age)
+	return animal
 }
 
-func requestAnimals() (animals []Animal) {
-	for {
+func requestAnimals() (animals []*Animal) {
+	for answer := "Yes";answer=="Yes"; {
 		animals = append(animals, requestAnimal())
 
-		var answer string
 		fmt.Print("Type 'Yes' if you want to continue: ")
-		if fmt.Scanln(&answer); answer != "Yes" {
-			break
-		}
+		fmt.Scanf("%s", &answer)
 	}
 	return
 }
 
-func dumpAnimals(animals []Animal) {
+func dumpAnimals(animals []*Animal) {
 	file, err := os.Create("farm.json")
 	defer file.Close()
 
